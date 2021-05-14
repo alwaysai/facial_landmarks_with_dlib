@@ -1,8 +1,6 @@
 import edgeiq
 import facial_landmarks
-import numpy as np
 import cv2
-
 
 
 def main():
@@ -18,23 +16,24 @@ def main():
             for image_path in image_paths:
                 image = cv2.imread(image_path)
                 image, gray_image = dlib_flm.image_preprocessor(image)
-                facial_coordinates, rectangles =dlib_flm.detect_faces_shapes(gray_image)
+                facial_coordinates, rectangles = dlib_flm.detect_faces_shapes(gray_image)
 
                 # Loop to markup image
                 for(i, rectangle) in enumerate(rectangles):
-                 (x, y, w, h) = dlib_flm.dlib_rectangle_to_cv_bondingbox(rectangle)
-                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                 cv2.putText(image, "Face #{}".format(i + 1), (x - 10, y - 10),
-             		cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    (x, y, w, h) = dlib_flm.dlib_rectangle_to_cv_bondingbox(rectangle)
+                    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    cv2.putText(
+                            image, "Face #{}".format(i + 1), (x - 10, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
                 for facial_coordinate in facial_coordinates:
-                    for (x,y) in facial_coordinate:
+                    for (x, y) in facial_coordinate:
                         cv2.circle(image, (x, y), 3, (255, 0, 0), -1)
 
                 streamer.send_data(image, text)
             streamer.wait()
     finally:
-         print("Program Ending")
+        print("Program Ending")
 
 
 if __name__ == "__main__":
